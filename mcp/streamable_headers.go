@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
 	"math"
@@ -364,11 +363,8 @@ func validateMcpHeaders(header http.Header, msg jsonrpc.Message, toolLookup func
 
 	switch msg := msg.(type) {
 	case *jsonrpc.Request:
-		methodInHeader := header.Get(methodHeader)
-		if methodInHeader == "" {
-			return errors.New("missing required Mcp-Method header")
-		}
-		if methodInHeader != msg.Method {
+		// Some clients send the method only in the JSON-RPC body.
+		if methodInHeader := header.Get(methodHeader); len(header.Values(methodHeader)) != 0 && methodInHeader != msg.Method {
 			return fmt.Errorf("header mismatch: Mcp-Method header value '%s' does not match body value '%s'", methodInHeader, msg.Method)
 		}
 

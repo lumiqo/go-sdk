@@ -237,11 +237,22 @@ func TestValidateMcpHeaders(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:           "missing Mcp-Method header",
+			name:    "missing Mcp-Method for discovery",
+			version: minVersionForStandardHeaders,
+			msg:     &jsonrpc.Request{Method: "server/discover"},
+		},
+		{
+			name:       "missing Mcp-Method for tools/call with Mcp-Name",
+			version:    minVersionForStandardHeaders,
+			nameHeader: "my-tool",
+			msg:        &jsonrpc.Request{Method: "tools/call", Params: mustMarshal(&CallToolParams{Name: "my-tool"})},
+		},
+		{
+			name:           "missing both method and name headers for tools/call",
 			version:        minVersionForStandardHeaders,
 			msg:            &jsonrpc.Request{Method: "tools/call", Params: mustMarshal(&CallToolParams{Name: "my-tool"})},
 			wantErr:        true,
-			wantErrContain: "missing required Mcp-Method header",
+			wantErrContain: "missing required Mcp-Name header",
 		},
 		{
 			name:           "missing Mcp-Name for tools/call",
