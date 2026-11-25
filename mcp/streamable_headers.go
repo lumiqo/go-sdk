@@ -371,7 +371,7 @@ func validateMcpHeaders(header http.Header, msg jsonrpc.Message, toolLookup func
 		var nameInBody string
 		if msg.Method == "tools/call" || msg.Method == "resources/read" || msg.Method == "prompts/get" {
 			nameInHeader := header.Get(nameHeader)
-			if nameInHeader == "" {
+			if len(header.Values(nameHeader)) == 0 && msg.Method != "tools/call" {
 				return fmt.Errorf("missing required Mcp-Name header for method %q", msg.Method)
 			}
 			var ok bool
@@ -379,7 +379,7 @@ func validateMcpHeaders(header http.Header, msg jsonrpc.Message, toolLookup func
 			if !ok {
 				return fmt.Errorf("failed to extract name from parameters for method %q", msg.Method)
 			}
-			if nameInHeader != nameInBody {
+			if len(header.Values(nameHeader)) != 0 && nameInHeader != nameInBody {
 				return fmt.Errorf("header mismatch: Mcp-Name header value '%s' does not match body value '%s'", nameInHeader, nameInBody)
 			}
 		}
