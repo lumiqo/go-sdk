@@ -371,7 +371,7 @@ func validateMcpHeaders(header http.Header, msg jsonrpc.Message, toolLookup func
 		var nameInBody string
 		if msg.Method == "tools/call" || msg.Method == "resources/read" || msg.Method == "prompts/get" {
 			nameInHeader := header.Get(nameHeader)
-			if len(header.Values(nameHeader)) == 0 && msg.Method != "tools/call" {
+			if len(header.Values(nameHeader)) == 0 && msg.Method == "prompts/get" {
 				return fmt.Errorf("missing required Mcp-Name header for method %q", msg.Method)
 			}
 			var ok bool

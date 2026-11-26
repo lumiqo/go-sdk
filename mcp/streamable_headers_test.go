@@ -259,12 +259,15 @@ func TestValidateMcpHeaders(t *testing.T) {
 			msg:          &jsonrpc.Request{Method: "tools/call", Params: mustMarshal(&CallToolParams{Name: "my-tool"})},
 		},
 		{
-			name:           "missing Mcp-Name for resources/read",
-			version:        minVersionForStandardHeaders,
-			methodHeader:   "resources/read",
-			msg:            &jsonrpc.Request{Method: "resources/read", Params: mustMarshal(&ReadResourceParams{URI: "file:///info.txt"})},
-			wantErr:        true,
-			wantErrContain: "missing required Mcp-Name header",
+			name:         "missing Mcp-Name for resources/read",
+			version:      minVersionForStandardHeaders,
+			methodHeader: "resources/read",
+			msg:          &jsonrpc.Request{Method: "resources/read", Params: mustMarshal(&ReadResourceParams{URI: "file:///info.txt"})},
+		},
+		{
+			name:    "missing both method and name headers for resources/read",
+			version: minVersionForStandardHeaders,
+			msg:     &jsonrpc.Request{Method: "resources/read", Params: mustMarshal(&ReadResourceParams{URI: "file:///info.txt"})},
 		},
 		{
 			name:           "missing Mcp-Name for prompts/get",
